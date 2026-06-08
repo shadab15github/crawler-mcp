@@ -1,0 +1,122 @@
+# Crawler MCP — Test Prompts
+
+One (or more) prompt per tool. The `*.toscrape.com` sites are purpose-built for
+scraping, so they're safe and stable targets to test against.
+
+## Tools
+
+### fetch_page
+```
+Using crawler-mcp, fetch https://example.com and give me the content as markdown.
+```
+```
+Using crawler-mcp, read https://quotes.toscrape.com and summarize what the page contains.
+```
+```
+Using crawler-mcp, get the raw HTML of https://example.com (use static render).
+```
+
+### fetch_clean
+```
+Using crawler-mcp, fetch a clean markdown version of https://quotes.toscrape.com with the boilerplate removed.
+```
+```
+Using crawler-mcp, read https://books.toscrape.com but keep only the sections about "science fiction".
+```
+
+### extract_links
+```
+Using crawler-mcp, list all the links on https://quotes.toscrape.com.
+```
+```
+Using crawler-mcp, extract only the same-domain links from https://books.toscrape.com (limit 20).
+```
+
+### extract_by_selector
+```
+Using crawler-mcp, from https://quotes.toscrape.com extract the text of every element matching ".quote .text".
+```
+```
+Using crawler-mcp, on https://quotes.toscrape.com extract the href attribute of every "a" inside ".tags".
+```
+```
+Using crawler-mcp, get all h1 headings from https://example.com.
+```
+
+### extract_schema
+```
+Using crawler-mcp, extract structured records from https://quotes.toscrape.com — one record per ".quote", with fields text (".text"), author (".author"), and tags (".tags a").
+```
+
+### extract_tables
+```
+Using crawler-mcp, pull all the tables from https://en.wikipedia.org/wiki/List_of_countries_by_population_(United_Nations) as markdown.
+```
+
+### extract_llm
+```
+Using crawler-mcp, use the LLM extractor on https://quotes.toscrape.com to extract each quote's text and author.
+```
+(Requires CRAWLER_LLM_PROVIDER + an API key in .env; otherwise it returns a clear "not configured" error.)
+
+### crawl_site
+```
+Using crawler-mcp, crawl https://quotes.toscrape.com at depth 1, max 5 pages, same domain only.
+```
+```
+Using crawler-mcp, crawl https://books.toscrape.com to depth 2 with max 10 pages and tell me what kind of site it is.
+```
+
+### deep_crawl
+```
+Using crawler-mcp, deep-crawl https://books.toscrape.com for pages about "mystery" books (keywords mystery, crime), depth 2, max 15 pages.
+```
+
+### crawl_dynamic
+```
+Using crawler-mcp, render https://quotes.toscrape.com/js/ (a JS-rendered page) and give me the quotes.
+```
+```
+Using crawler-mcp, open https://quotes.toscrape.com/scroll, scroll to the bottom to load more quotes, then return the content.
+```
+
+### capture_page
+```
+Using crawler-mcp, take a full-page screenshot of https://example.com.
+```
+```
+Using crawler-mcp, render https://example.com to a PDF and tell me where it was saved.
+```
+
+---
+
+## Optional flags
+
+- **Render mode** — append `render=static` (never use a browser), `render=browser`
+  (always render JS with crawl4ai), or omit for `auto` (static first, browser if needed).
+- **Output format** — `fetch_page` accepts `format=markdown` (default), `format=text`, or `format=html`.
+- **Limits** — `fetch_page`/`fetch_clean`/`crawl_dynamic` take `max_chars`; `crawl_site` takes
+  `max_depth` (≤3), `max_pages` (≤50), `chars_per_page`, and `delay_ms` (politeness delay);
+  `deep_crawl` takes `max_depth` (≤4) and `max_pages` (≤60).
+
+## Quick smoke test
+
+```
+Using crawler-mcp, fetch example.com as markdown, then list its links.
+```
+
+## Running the server
+
+```
+python server.py              # stdio transport (default) — for Claude Desktop
+python server.py --http       # streamable-http transport on MCP_HTTP_PORT (default 3001)
+```
+
+## Error-handling checks
+
+```
+Using crawler-mcp, fetch "not a real url ::: broken" and tell me what happens.
+```
+```
+Using crawler-mcp, fetch https://httpstat.us/404 and report the status.
+```
